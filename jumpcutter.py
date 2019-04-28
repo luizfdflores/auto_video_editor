@@ -91,6 +91,7 @@ SAMPLE_RATE = args.sample_rate
 SILENT_THRESHOLD = args.silent_threshold
 FRAME_SPREADAGE = args.frame_margin
 NEW_SPEED = [args.silent_speed, args.sounded_speed]
+
 if args.url is not None:
     INPUT_FILE = download_file(args.url)
 else:
@@ -113,6 +114,7 @@ create_path(TEMP_FOLDER)
 
 command = "ffmpeg -i " + INPUT_FILE + " -qscale:v " + str(
     FRAME_QUALITY) + " " + TEMP_FOLDER + "/frame%06d.jpg -hide_banner"
+
 subprocess.call(command, shell=True)
 
 command = "ffmpeg -i " + INPUT_FILE + " -ab 160k -ac 2 -ar " + str(SAMPLE_RATE) + " -vn " + TEMP_FOLDER + "/audio.wav"
@@ -151,7 +153,7 @@ for i in range(audioFrameCount):
         hasLoudAudio[i] = 1
 
 chunks = [[0, 0, 0]]
-shouldIncludeFrame = np.zeros((audioFrameCount))
+shouldIncludeFrame = np.zeros(audioFrameCount)
 for i in range(audioFrameCount):
     start = int(max(0, i - FRAME_SPREADAGE))
     end = int(min(audioFrameCount, i + 1 + FRAME_SPREADAGE))
@@ -214,7 +216,8 @@ for endGap in range(outputFrame,audioFrameCount):
 '''
 
 command = "ffmpeg -framerate " + str(
-    frameRate) + " -i " + TEMP_FOLDER + "/newFrame%06d.jpg -i " + TEMP_FOLDER + "/audioNew.wav -strict -2 " + OUTPUT_FILE
+    frameRate) + " -i " + TEMP_FOLDER + "/newFrame%06d.jpg -i " + TEMP_FOLDER + "/audioNew.wav -strict -2 " + \
+          OUTPUT_FILE
 subprocess.call(command, shell=True)
 
 delete_path(TEMP_FOLDER)
